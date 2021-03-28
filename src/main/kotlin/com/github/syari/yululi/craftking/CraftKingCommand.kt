@@ -10,7 +10,7 @@ object CraftKingCommand {
             aliases = listOf("ck")
             permission = "craftking.command"
             tab {
-                argument { addAll("start", "stop") }
+                argument { addAll("start", "stop", "pickup") }
             }
             execute {
                 when (args.lowerOrNull(0)) {
@@ -30,12 +30,20 @@ object CraftKingCommand {
                             sender.send("&fゲームが停止されました")
                         }
                     }
+                    "pickup" -> {
+                        args.getOrNull(1)?.let {
+                            val number = it.toIntOrNull() ?: return@execute sender.send("&cピックアップする種類数を整数で入力してください")
+                            PointCalculator.updatePickup(number)
+                        } ?: sender.spigot().sendMessage(PointCalculator.pickUpMessage)
+                    }
                     else -> {
                         sender.send(
                             """
                                 &fコマンド一覧
                                 &a/$label start &7ゲームを開始します
                                 &a/$label start &7ゲームを停止します
+                                &a/$label pickup &7ピックアップアイテムを確認します
+                                &a/$label pickup <種類数> &7ピックアップを手動で更新します
                             """.trimIndent()
                         )
                     }
