@@ -15,5 +15,6 @@ class Main : JavaPlugin() {
 
     override fun onEnable() {
         registerEvents(EventListener)
+        CraftKingCommand.register()
     }
 }
