@@ -11,6 +11,9 @@ object CraftKingCommand {
             permission = "craftking.command"
             tab {
                 argument { addAll("start", "stop", "pickup", "limit", "elapsed") }
+                argument("pickup") { addAll("list", "force", "number", "period") }
+                argument("pickup force", "pickup number") { add(Manager.pickupNumber.toString()) }
+                argument("pickup period") { add(Manager.pickupPeriod.toString()) }
                 argument("limit") { add(Manager.limitTime.toString()) }
                 argument("elapsed") { add(Manager.elapsedTime.toString()) }
             }
@@ -33,10 +36,39 @@ object CraftKingCommand {
                         }
                     }
                     "pickup" -> {
-                        args.getOrNull(1)?.let {
-                            val number = it.toIntOrNull() ?: return@execute sender.send("&cピックアップする種類数を整数で入力してください")
-                            PointCalculator.updatePickup(number)
-                        } ?: sender.spigot().sendMessage(PointCalculator.pickUpMessage)
+                        when (args.lowerOrNull(1)) {
+                            "list" -> {
+                                sender.spigot().sendMessage(PointCalculator.pickUpMessage)
+                            }
+                            "force" -> {
+                                args.getOrNull(2)?.toIntOrNull()?.let {
+                                    PointCalculator.updatePickup(it)
+                                } ?: return@execute sender.send("&cピックアップする種類数を整数で入力してください")
+                            }
+                            "number" -> {
+                                args.getOrNull(2)?.toIntOrNull()?.let {
+                                    Manager.pickupNumber = it
+                                    sender.send("&f自動ピックアップの種類数を &a$it &fにしました")
+                                } ?: return@execute sender.send("&c自動ピックアップする種類数を整数で入力してください")
+                            }
+                            "period" -> {
+                                args.getOrNull(2)?.toLongOrNull()?.let {
+                                    Manager.pickupPeriod = it
+                                    sender.send("&f自動ピックアップの間隔を &a$it &f秒にしました")
+                                } ?: return@execute sender.send("&c自動ピックアップする間隔を整数で入力してください")
+                            }
+                            else -> {
+                                sender.send(
+                                    """
+                                        &fコマンド一覧
+                                        &a/$label pickup list &7ピックアップアイテムを確認します
+                                        &a/$label pickup force <種類数> &7ピックアップを手動で更新します
+                                        &a/$label pickup number <種類数> &7自動ピックアップ時の種類数を変更します
+                                        &a/$label pickup period <秒数> &7自動ピックアップの間隔を変更します
+                                    """.trimIndent()
+                                )
+                            }
+                        }
                     }
                     "limit" -> {
                         args.getOrNull(1)?.let {
@@ -57,7 +89,7 @@ object CraftKingCommand {
                                 &a/$label start &7ゲームを開始します
                                 &a/$label stop &7ゲームを停止します
                                 &a/$label pickup &7ピックアップアイテムを確認します
-                                &a/$label pickup <種類数> &7ピックアップを手動で更新します
+                                &a/$label pickup force <種類数> &7ピックアップを手動で更新します
                                 &a/$label limit &7制限時間を確認します
                                 &a/$label limit <秒数> &7制限時間を変更します
                                 &a/$label elapsed &7経過時間を確認します

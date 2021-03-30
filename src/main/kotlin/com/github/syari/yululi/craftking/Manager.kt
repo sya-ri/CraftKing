@@ -14,6 +14,10 @@ object Manager {
 
     var elapsedTime = 0L
 
+    var pickupNumber = 5
+
+    var pickupPeriod = 3 * 60L
+
     private var task: BukkitTask? = null
 
     private var timeBar = Bukkit.createBossBar(null, BarColor.GREEN, BarStyle.SOLID)
@@ -30,6 +34,9 @@ object Manager {
                     if (limitTime < elapsedTime) {
                         isWait = true
                     } else {
+                        if (elapsedTime != limitTime && elapsedTime % pickupPeriod == 0L) {
+                            PointCalculator.updatePickup(pickupNumber)
+                        }
                         val (barColor, chatColor) = getColor(elapsedTime)
                         timeBar.color = barColor
                         timeBar.setTitle("&6&lCraftKing &7- $chatColor&l${formatTime(elapsedTime)}".toColor())
