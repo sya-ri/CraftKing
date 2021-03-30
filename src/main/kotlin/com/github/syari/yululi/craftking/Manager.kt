@@ -50,6 +50,9 @@ object Manager {
                                     plugin.server.onlinePlayers.forEach {
                                         it.teleport(spawnLocation)
                                     }
+                                    plugin.runTaskLater(100) {
+                                        PointCounter.showRank()
+                                    }
                                 }
                             } else {
                                 if (elapsedTime != limitTime && elapsedTime % pickupPeriod == 0L) {
