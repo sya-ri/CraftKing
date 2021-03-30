@@ -10,7 +10,9 @@ object CraftKingCommand {
             aliases = listOf("ck")
             permission = "craftking.command"
             tab {
-                argument { addAll("start", "stop", "pickup") }
+                argument { addAll("start", "stop", "pickup", "limit", "elapsed") }
+                argument("limit") { add(Manager.limitTime.toString()) }
+                argument("elapsed") { add(Manager.elapsedTime.toString()) }
             }
             execute {
                 when (args.lowerOrNull(0)) {
@@ -36,6 +38,18 @@ object CraftKingCommand {
                             PointCalculator.updatePickup(number)
                         } ?: sender.spigot().sendMessage(PointCalculator.pickUpMessage)
                     }
+                    "limit" -> {
+                        args.getOrNull(1)?.let {
+                            val limitTime = it.toLongOrNull() ?: return@execute sender.send("&c制限時間を秒数で入力してください")
+                            Manager.limitTime = limitTime
+                        } ?: sender.send("&c現在の制限時間は ${Manager.limitTime} 秒です")
+                    }
+                    "elapsed" -> {
+                        args.getOrNull(1)?.let {
+                            val elapsedTime = it.toLongOrNull() ?: return@execute sender.send("&c経過時間を秒数で入力してください")
+                            Manager.elapsedTime = elapsedTime
+                        } ?: sender.send("&c現在の経過時間は ${Manager.limitTime} 秒です")
+                    }
                     else -> {
                         sender.send(
                             """
@@ -44,6 +58,10 @@ object CraftKingCommand {
                                 &a/$label start &7ゲームを停止します
                                 &a/$label pickup &7ピックアップアイテムを確認します
                                 &a/$label pickup <種類数> &7ピックアップを手動で更新します
+                                &a/$label limit &7制限時間を確認します
+                                &a/$label limit <秒数> &7制限時間を変更します
+                                &a/$label elapsed &7経過時間を確認します
+                                &a/$label elapsed <秒数> &7経過時間を変更します
                             """.trimIndent()
                         )
                     }
