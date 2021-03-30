@@ -33,6 +33,17 @@ object EventListener : EventRegister {
                     if (0 < point) {
                         val bonusMessage = StringBuilder()
                         if (material.isFirstCraft) {
+                            plugin.server.spigot().broadcast(
+                                buildTextComponent {
+                                    append("&7&l>> &a${player.displayName} &fが ")
+                                    append(
+                                        translateComponent(material).apply {
+                                            color = ChatColor.AQUA
+                                        }
+                                    )
+                                    append("&f を初めてクラフトしました")
+                                }
+                            )
                             bonusMessage.append(" &6[First]")
                             point *= 2
                         }
@@ -41,18 +52,6 @@ object EventListener : EventRegister {
                             point *= 3
                         }
                         pointCounter.add(material, point)
-                        plugin.server.spigot().broadcast(
-                            buildTextComponent {
-                                append("&7&l>> &a${player.displayName} &fが ")
-                                append(
-                                    translateComponent(material).apply {
-                                        color = ChatColor.AQUA
-                                    }
-                                )
-                                append("&f をクラフトしました")
-                                append(bonusMessage.toString())
-                            }
-                        )
                         player.send("&f現在の得点は &a${pointCounter.points} &fです")
                     }
                 }
