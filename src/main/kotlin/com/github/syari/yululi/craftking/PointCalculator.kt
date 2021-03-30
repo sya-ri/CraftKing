@@ -4,8 +4,10 @@ import com.github.syari.spigot.api.component.buildTextComponent
 import com.github.syari.spigot.api.component.hoverItem
 import com.github.syari.spigot.api.component.hoverText
 import com.github.syari.spigot.api.component.translateComponent
+import com.github.syari.spigot.api.sound.playSound
 import com.github.syari.yululi.craftking.Main.Companion.plugin
 import org.bukkit.Material
+import org.bukkit.Sound
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.ShapedRecipe
 import org.bukkit.inventory.ShapelessRecipe
@@ -60,6 +62,9 @@ object PointCalculator {
             }
         }
         plugin.server.spigot().broadcast(pickUpMessage)
+        plugin.server.onlinePlayers.forEach {
+            it.playSound(Sound.BLOCK_NOTE_BLOCK_HARP)
+        }
     }
 
     val pickUpMessage

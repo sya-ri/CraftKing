@@ -2,7 +2,9 @@ package com.github.syari.yululi.craftking
 
 import com.github.syari.spigot.api.command.command
 import com.github.syari.spigot.api.command.tab.CommandTabArgument.Companion.argument
+import com.github.syari.spigot.api.config.type.data.ConfigLocationDataType
 import com.github.syari.yululi.craftking.Main.Companion.plugin
+import org.bukkit.entity.Player
 
 object CraftKingCommand {
     fun register() {
@@ -10,7 +12,7 @@ object CraftKingCommand {
             aliases = listOf("ck")
             permission = "craftking.command"
             tab {
-                argument { addAll("start", "stop", "pickup", "limit", "elapsed") }
+                argument { addAll("start", "stop", "pickup", "limit", "elapsed", "spawn") }
                 argument("pickup") { addAll("list", "force", "number", "period") }
                 argument("pickup force", "pickup number") { add(Manager.pickupNumber.toString()) }
                 argument("pickup period") { add(Manager.pickupPeriod.toString()) }
@@ -82,6 +84,11 @@ object CraftKingCommand {
                             Manager.elapsedTime = elapsedTime
                         } ?: sender.send("&c現在の経過時間は ${Manager.limitTime} 秒です")
                     }
+                    "spawn" -> {
+                        val player = sender as? Player ?: return@execute sender.send("&cプレイヤーからのみ実行出来るコマンドです")
+                        Manager.spawnLocation = player.location
+                        player.send("&f終了後のスポーン地点を &a${ConfigLocationDataType.locationToString(player.location)} &fに変更しました")
+                    }
                     else -> {
                         sender.send(
                             """
@@ -94,6 +101,7 @@ object CraftKingCommand {
                                 &a/$label limit <秒数> &7制限時間を変更します
                                 &a/$label elapsed &7経過時間を確認します
                                 &a/$label elapsed <秒数> &7経過時間を変更します
+                                &a/$label spawn &7終了後のスポーン地点を変更します
                             """.trimIndent()
                         )
                     }
