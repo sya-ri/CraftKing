@@ -1,9 +1,11 @@
 package com.github.syari.yululi.craftking
 
 import com.github.syari.spigot.api.component.buildTextComponent
+import com.github.syari.spigot.api.sound.playSound
 import com.github.syari.spigot.api.uuid.UUIDPlayer
 import com.github.syari.yululi.craftking.Main.Companion.plugin
 import org.bukkit.Material
+import org.bukkit.Sound
 import org.bukkit.entity.Player
 
 class PointCounter {
@@ -29,6 +31,7 @@ class PointCounter {
 
         @OptIn(ExperimentalStdlibApi::class)
         fun showRank() {
+            val rankList = mutableMapOf<UUIDPlayer, Int>()
             plugin.server.spigot().broadcast(
                 buildTextComponent {
                     appendLine()
@@ -48,6 +51,11 @@ class PointCounter {
                     }
                 }
             )
+            rankList.forEach { (player, rank) ->
+                if (3 <= rank) {
+                    player.player?.playSound(Sound.UI_TOAST_CHALLENGE_COMPLETE)
+                }
+            }
         }
     }
 }
