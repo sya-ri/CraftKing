@@ -55,7 +55,7 @@ object CraftKingCommand {
                             """
                                 &fコマンド一覧
                                 &a/$label start &7ゲームを開始します
-                                &a/$label start &7ゲームを停止します
+                                &a/$label stop &7ゲームを停止します
                                 &a/$label pickup &7ピックアップアイテムを確認します
                                 &a/$label pickup <種類数> &7ピックアップを手動で更新します
                                 &a/$label limit &7制限時間を確認します
