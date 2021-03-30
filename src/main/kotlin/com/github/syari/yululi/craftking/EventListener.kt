@@ -49,7 +49,7 @@ object EventListener : EventRegister {
                         }
                         if (material.isPickupCraft) {
                             bonusMessage.append(" &d[Pickup]")
-                            point *= 3
+                            point *= 5
                         }
                         pointCounter.add(material, point)
                         player.send("&f現在の得点は &a${pointCounter.points} &fです")
