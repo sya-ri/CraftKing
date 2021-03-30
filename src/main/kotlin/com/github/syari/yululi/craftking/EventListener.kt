@@ -1,9 +1,14 @@
 package com.github.syari.yululi.craftking
 
+import com.github.syari.spigot.api.component.buildTextComponent
+import com.github.syari.spigot.api.component.translateComponent
 import com.github.syari.spigot.api.event.EventRegister
 import com.github.syari.spigot.api.event.Events
-import com.github.syari.yululi.craftking.PointCalculator.craftPoint
+import com.github.syari.yululi.craftking.PointCalculator.baseCraftPoint
+import com.github.syari.yululi.craftking.PointCalculator.isFirstCraft
+import com.github.syari.yululi.craftking.PointCalculator.isPickupCraft
 import com.github.syari.yululi.craftking.PointCounter.Companion.craftPointCounter
+import net.md_5.bungee.api.ChatColor
 import org.bukkit.entity.Player
 import org.bukkit.event.block.BlockBreakEvent
 import org.bukkit.event.block.BlockCanBuildEvent
@@ -24,9 +29,30 @@ object EventListener : EventRegister {
                 val pointCounter = player.craftPointCounter
                 val material = it.recipe.result.type
                 if (pointCounter.contains(material).not()) {
-                    val point = material.craftPoint
+                    var point = material.baseCraftPoint
                     if (0 < point) {
+                        val bonusMessage = StringBuilder()
+                        if (material.isFirstCraft) {
+                            bonusMessage.append(" &6[First]")
+                            point *= 2
+                        }
+                        if (material.isPickupCraft) {
+                            bonusMessage.append(" &d[Pickup]")
+                            point *= 3
+                        }
                         pointCounter.add(material, point)
+                        plugin.server.spigot().broadcast(
+                            buildTextComponent {
+                                append("&7&l>> &a${player.displayName} &fが ")
+                                append(
+                                    translateComponent(material).apply {
+                                        color = ChatColor.AQUA
+                                    }
+                                )
+                                append("&f をクラフトしました")
+                                append(bonusMessage.toString())
+                            }
+                        )
                         player.send("&f現在の得点は &a${pointCounter.points} &fです")
                     }
                 }

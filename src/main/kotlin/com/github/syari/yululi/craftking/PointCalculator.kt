@@ -28,27 +28,23 @@ object PointCalculator {
     private val alreadyCrafted = mutableSetOf<Material>()
     private var pickUpMaterial = setOf<Material>()
 
-    val Material.craftPoint
+    val Material.baseCraftPoint
         get() = if (allMaterial.contains(this)) {
-            1 * firstCraftBonus * pickupCraftBonus
+            1
         } else {
             0
         }
 
-    private val Material.firstCraftBonus
+    val Material.isFirstCraft
         get() = if (alreadyCrafted.contains(this)) {
-            1
+            false
         } else {
             alreadyCrafted.add(this)
-            2
+            true
         }
 
-    private val Material.pickupCraftBonus
-        get() = if (pickUpMaterial.contains(this)) {
-            3
-        } else {
-            1
-        }
+    val Material.isPickupCraft
+        get() = pickUpMaterial.contains(this)
 
     @OptIn(ExperimentalStdlibApi::class)
     fun updatePickup(number: Int) {
