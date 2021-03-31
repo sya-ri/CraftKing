@@ -31,7 +31,6 @@ class PointCounter {
 
         @OptIn(ExperimentalStdlibApi::class)
         fun showRank() {
-            val rankList = mutableMapOf<UUIDPlayer, Int>()
             plugin.server.spigot().broadcast(
                 buildTextComponent {
                     appendLine()
@@ -43,19 +42,17 @@ class PointCounter {
                         list.forEach {
                             getOrPut(it.value.points, ::mutableSetOf).add(it.key)
                         }
-                    }.toList().sortedBy { it.first }.forEach { (point, players) ->
+                    }.toList().sortedByDescending { it.first }.forEach { (point, players) ->
                         players.forEach {
                             appendLine("&a$rank &6${it.offlinePlayer.name} &a$point pt")
+                            if (rank <= 3) {
+                                it.player?.playSound(Sound.UI_TOAST_CHALLENGE_COMPLETE)
+                            }
                         }
                         rank += players.size
                     }
                 }
             )
-            rankList.forEach { (player, rank) ->
-                if (3 <= rank) {
-                    player.player?.playSound(Sound.UI_TOAST_CHALLENGE_COMPLETE)
-                }
-            }
         }
     }
 }
